@@ -1,20 +1,27 @@
 defmodule DSLTest do
   use ExUnit.Case
-  use DSL
 
   test "run a module" do
-    node "master", "workspace/foo" do
-      trigger do
-        Git.ref "refs/heads/master"
+    code = """
+      node "master", "workspace/bar" do
+        tasks do
+          Shell.cmd ["pwd"]
+          Shell.raw "echo barber > bar"
+          Shell.raw "cat bar"
+        end
       end
 
-      tasks do
-        Shell.echo "hello shell"
-        Shell.run ["whoami"]
-        Shell.run ["ls", "-1"]
-        Git.clone(repo: "bar.git", branch: "master")
-        Git.pull
+      node "master", "workspace/foo" do
+        tasks do
+          Shell.cmd ["pwd"]
+          Shell.raw "echo a > a"
+          Shell.raw "echo b > b"
+          Shell.raw "ls -1"
+          Shell.cmd ["cat", "a"]
+          Shell.cmd ["ls", "-1"]
+        end
       end
-    end
+    """
+    DSL.run(code)
   end
 end
