@@ -2,7 +2,7 @@ defmodule DSLTest do
   use ExUnit.Case
 
   test "run a module" do
-    code = """
+    code = quote do
       node "master", "workspace/bar" do
         tasks do
           Shell.cmd ["pwd"]
@@ -21,7 +21,7 @@ defmodule DSLTest do
           Shell.cmd ["ls", "-1"]
         end
       end
-    """
+    end
     DSL.run(code)
   end
 end

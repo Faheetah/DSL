@@ -12,10 +12,10 @@ defmodule DSL do
   def log(module, method, message), do: IO.puts "#{module}.#{method}: #{message}"
 
   def run(code) do
-    job(Code.string_to_quoted(code))
+    job(code)
   end
 
-  def job({:ok, code}) do
+  def job(code) do
     {:ok, log_pid} = TaskLogger.start_link([verbose: false])
     normalize_block(code)
     |> Stream.map(fn command ->
