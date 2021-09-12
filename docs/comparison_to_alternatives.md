@@ -61,7 +61,7 @@
 # Docker/Kubernetes
 
 * Entry: CLI for docker, via API or web interface for Kubernetes
-* Instructions: using Dockerfile DSL, minimal functionality, leaning heavily on shell scripting
+* Instructions: using Dockerfile DSL, minimal functionality, leaning heavily on shell scripting, YAML for Kubernetes
 * Organization: Kubernetes has a robust DSL for orchestrating infrastructure, otherwise Dockerfiles are minimal
 * Hosts: treated as cattle, host groups are referenced as pods and provisioned off of a golden image
 * Variables: exclusively with env vars
