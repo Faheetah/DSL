@@ -10,6 +10,15 @@
 * Idempotennce: what mechanism determines whether things should run again
 * Secret Handling: how are secrets managed, if applicable
 
+# Languages used:
+
+Chef - Ruby, DSL subset of Ruby, some JSON
+Ansible - YAML
+Jenkins - Groovy, DSL subset of Groovy, own DSL based loosely on Groovy AST
+Terraform - HCL or JSON
+Docker - own DSL
+Kubernetes - YAML
+
 # Chef
 
 * Entry: a local process on each host that runs a set of instructions that are fetched from a server
@@ -42,9 +51,13 @@
 * Hosts: connected to the main server as a node that can be specified as a target in pipelines
 * Variables: via Jenkins plugins, or by setting a job parameter with a default value, or DIY, nodes can be assigned env vars
 * Logging: each job tracks builds that run, each build is stored with its console output viewable on filesystem or via web UI
-* Extensibility: handled via `vars` directory, or provide stand alone Groovy classes
+* Extensibility: handled via `vars` directory, or provide stand alone Groovy classes, plugins can be installed as JAR files
 * Idempotence: user is responsible for ensuring idempotence
 * Secret Handling: includes its own secret store, with the server both encrypting and decrypting secrets
+
+Notes:
+
+DSL is restricted, both due to security reasons (as code can execute on the "master" executor) and for serialization reasons (due to CPS), not all Groovy is available due to this.
 
 # Terraform/Packer
 

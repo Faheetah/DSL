@@ -1,4 +1,4 @@
-defmodule Shell do
+defmodule DSL.Shell do
   def echo(string) do
     "echo #{string}"
   end
@@ -9,7 +9,7 @@ defmodule Shell do
     String.trim(out)
   end
 
-  def raw(command) do
+  def shell(command) do
     :os.cmd(String.to_charlist(command))
     |> case do
       [] -> true

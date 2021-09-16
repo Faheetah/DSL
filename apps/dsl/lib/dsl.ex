@@ -2,8 +2,10 @@ defmodule DSL do
   defmacro __using__(_opts) do
     quote do
       import DSL
-      import Shell
-      import Git
+      import DSL.Shell
+      import DSL.Git
+      import DSL.Host
+      import DSL.File
     end
   end
 
@@ -19,18 +21,18 @@ defmodule DSL do
     {:ok, log_pid} = TaskLogger.start_link([verbose: false])
     normalize_block(code)
     |> Stream.map(fn command ->
-      {:node, _, [name, workspace | _]} = command
-      TaskLogger.log(log_pid, {:start, "node.#{name}:#{workspace}"})
+      {:host, _, [name, [dir: dir] | _]} = command
+      TaskLogger.log(log_pid, {:start, "host.#{name}:#{dir}"})
       # todo this needs to take a stream or something polymorphic out
       run = quote do
         use DSL
         unquote command
       end
       {result, _} = Code.eval_quoted run
-      {name, workspace, result}
+      {name, dir, result}
     end)
-    |> Enum.each(fn {name, workspace, _} ->
-      TaskLogger.log(log_pid, {:end, "node.#{name}:#{workspace}"})
+    |> Enum.each(fn {name, dir, _} ->
+      TaskLogger.log(log_pid, {:end, "host.#{name}:#{dir}"})
     end)
   end
 
@@ -42,14 +44,22 @@ defmodule DSL do
     end
   end
 
-  defmacro node(_name, workspace, do: block) do
-    File.mkdir_p(workspace)
+  defmacro host(name, [dir: dir], do: block) do
+    dir =
+      case dir do
+        nil -> "."
+        x -> x
+      end
+
+    IO.puts "Running on #{name} in dir: #{dir}"
+
+    File.mkdir_p(dir)
     run = quote do
       use DSL
       unquote block
     end
     # Code.eval_quoted(run)
-    File.cd!(workspace, fn -> Code.eval_quoted(run) end)
+    File.cd!(dir, fn -> Code.eval_quoted(run) end)
   end
 
   defmacro tasks(do: block) do

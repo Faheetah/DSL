@@ -1,4 +1,4 @@
-defmodule PluPluginsgins do
+defmodule Plugins do
   use GenServer
 
   def start_link(_) do

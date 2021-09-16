@@ -1,4 +1,4 @@
-defmodule Git do
+defmodule DSL.Git do
 
   def ref(ref) do
     "listening on #{ref}"
