@@ -10,7 +10,7 @@ defmodule DSL.Host do
 
     File.mkdir_p(dir)
     run = quote do
-      use DSL
+      # use DSL
       unquote block
     end
     # Code.eval_quoted(run)

@@ -15,4 +15,7 @@
     when: somevar is true
     with_items: [foo, bar]
     notifies: restart_nginx # another task specified in handlers
+
+  - debug:
+      msg: "Template changed is {{ template.changed }}"
 ```

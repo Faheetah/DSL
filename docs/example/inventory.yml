@@ -1,0 +1,60 @@
+## assets
+
+# individual hosts
+- host: foo
+- host: bar
+  vars:
+    host_var: host_value
+    overridden_var: displayed, host has top priority
+
+# groups of hosts
+- group: foobars
+  hosts:
+    - foo
+    - bar
+  vars:
+    group_var: group_value
+    overridden_var: not set, overridden by host
+  jobs:
+    - job: example_job
+    - role: example_role
+
+## runnables
+
+# individual runnable set of modules
+- job: example_job
+  triggers: []
+  steps:
+    - step: example_step
+      # missing values should ideally get caught at job compile time
+      # iow before the job executes it ensures the host has all vars defined
+      module_name:
+        arg: "{{ role_var }} - {{ group_var }} - {{ host_var }} - {{ overridden_var }}"
+      magic_word: magic_value # like conditionals
+      # output: role_value - group_value - host_value - displayed, host has top priority
+    - another_module:
+        arg: "{{ step_reference.result }} - {{ step_reference.output |> Enum.map(fn file -> File.basename(file) end) |> Enum.join(', ') }}"
+        # if example_step was something like a file listing, it would display something like
+        # :ok - foo.txt, bar.json
+
+# a grouping of jobs
+- role: example_role
+  # would need a way to massage inputs
+  triggers:
+    - some_trigger
+    - trigger: blah
+      timer:
+        cron: '* * * * * *'
+  hosts: []
+  jobs:
+    - job: example_job
+      vars:
+        role_var: role level variable
+        overridden_var: not set, overridden by group
+    - role: some_other_role
+
+# configuration for triggers
+- trigger: some_trigger
+  git:
+    host: github.com
+    api_token: fj89wjrg73w8vromeisfld
